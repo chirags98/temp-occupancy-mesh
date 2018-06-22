@@ -23,6 +23,7 @@ DallasTemperature sensors(&oneWire); // Pass our oneWire reference to Dallas Tem
 
 float get_temperature();
 void send_temperature();
+void wakeup_sendTemp();
 float temperature = 0;
 
 //Pin definitions for OLED connections
@@ -284,9 +285,9 @@ void loop()
                     break;
                 }
             }
-            Serial.println("Sending temperature");
-            send_temperature();
-            Serial.println("Sent temperature");
+
+            //
+
         }
         sensor_interrupt_flag = false;
 
@@ -329,19 +330,18 @@ void loop()
 			watchdog_count++;
 			temp_watchdog_count++;
 
+			Serial.println("Sending temperature");
+
 			if(watchdog_count == 12)	//94 seconds
 			{
 				break;
 			}
 
-			/*
-			if(watchdog_count == 5)
+			if(temp_watchdog_count == 5)
 			{
-				wake_up();
-				send_temperature();
-				sleep();
+				temp_watchdog_count = 0;
+				wakeup_sendTemp();
 			}
-			*/
 		}
 
 		//Trigger due to pir
@@ -353,6 +353,7 @@ void loop()
 
 	//Radio powers up and connects to mesh (watchdog_count is made 0)
 	wake_up();
+	watchdog_count = 0;
 
     delay(500);
 }
@@ -386,8 +387,6 @@ void wake_up()
 {
 	radio.powerUp();
 	mesh.renewAddress();	//Will try for one minute by default to renew addresses
-	watchdog_count = 0;
-	temp_watchdog_count = 0;
 }
 
 float get_temperature()
@@ -437,4 +436,13 @@ void send_temperature()
 			break;
 		}
 	}
+}
+
+void wakeup_sendTemp()
+{
+	wake_up();
+	mesh.update();
+	send_temperature();
+	Serial.println("Sent temperature");
+	//sleep();
 }

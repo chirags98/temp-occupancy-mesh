@@ -2,7 +2,7 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2018-06-22 14:16:07
+//This file has been generated on 2018-06-22 15:16:34
 
 #include "Arduino.h"
 #include "Arduino.h"
@@ -27,6 +27,7 @@ void sleep() ;
 void wake_up() ;
 float get_temperature() ;
 void send_temperature() ;
+void wakeup_sendTemp() ;
 
 #include "Occup_Temp_Node.ino"
 
